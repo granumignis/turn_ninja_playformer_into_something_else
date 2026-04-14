@@ -2,7 +2,9 @@ extends CharacterBody2D
 
 enum STATE { MOVE, CLIMB, HIT }
 
-@export var stats: Stats
+
+var stats: Stats:
+	get: return GameManager.stats
 
 @export var state: = STATE.MOVE
 
@@ -34,7 +36,6 @@ var coyote_time: = 0
 
 
 func _ready() -> void:	
-	
 	stats.no_health.connect(func():
 		queue_free()
 		camera_2d.reparent(get_tree().current_scene)
