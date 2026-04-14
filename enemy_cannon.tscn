@@ -1,0 +1,89 @@
+[gd_scene load_steps=11 format=3 uid="uid://bgjcf58hhul47"]
+
+[ext_resource type="Script" uid="uid://cfy33ltnr242j" path="res://enemy_cannon.gd" id="1_0g0tg"]
+[ext_resource type="Texture2D" uid="uid://c25dy5hjgcrub" path="res://cannon_enemy.png" id="1_ur6l4"]
+[ext_resource type="Script" uid="uid://mg8j6tc376ry" path="res://hurtbox.gd" id="2_0g0tg"]
+[ext_resource type="Script" uid="uid://bxsoug8tc1gb4" path="res://stats.gd" id="2_ssugy"]
+[ext_resource type="Script" uid="uid://bphx4e46p3tft" path="res://hitbox.gd" id="2_vijem"]
+[ext_resource type="Material" uid="uid://1c62qb84o2im" path="res://effects_material.tres" id="3_a4fqf"]
+
+[sub_resource type="Resource" id="Resource_a4fqf"]
+script = ExtResource("2_ssugy")
+health = 3
+metadata/_custom_type_script = "uid://bxsoug8tc1gb4"
+
+[sub_resource type="Animation" id="Animation_d8mcu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:material:shader_parameter/flash_enabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_a4fqf"]
+resource_name = "hitflash"
+length = 0.2
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:material:shader_parameter/flash_enabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_d8mcu"]
+_data = {
+&"RESET": SubResource("Animation_d8mcu"),
+&"hitflash": SubResource("Animation_a4fqf")
+}
+
+[node name="EnemyCannon" type="Node2D"]
+script = ExtResource("1_0g0tg")
+stats = SubResource("Resource_a4fqf")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource("3_a4fqf")
+position = Vector2(0, -8)
+texture = ExtResource("1_ur6l4")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("2_0g0tg")
+metadata/_custom_type_script = "uid://mg8j6tc376ry"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hurtbox"]
+polygon = PackedVector2Array(-10, 0, -10, -2, -3, -6, -3, -9, -9, -9, -10, -10, -10, -14, -9, -15, -3, -15, -3, -16, 6, -16, 8, -15, 9, -12, 9, -10, 4, -5, 10, -2, 10, 0)
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+script = ExtResource("2_vijem")
+metadata/_custom_type_script = "uid://bphx4e46p3tft"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hitbox"]
+polygon = PackedVector2Array(-10, 0, -10, -2, -3, -6, -3, -9, -9, -9, -10, -10, -10, -14, -9, -15, -3, -15, -3, -16, 6, -16, 8, -15, 9, -12, 9, -10, 4, -5, 10, -2, 10, 0)
+
+[node name="Effects_AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_d8mcu")
+}
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(-9, -12)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
